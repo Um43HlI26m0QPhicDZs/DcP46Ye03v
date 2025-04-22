@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #1a1a1d, #4e4e50);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+
+    h1 {
+      font-size: 10vw;
+      font-weight: 700;
+      margin-bottom: 40px;
+      border-right: 3px solid white;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      animation: typing 1.2s steps(10, end) forwards, blink 0.7s infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 3ch }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    button {
+      padding: 14px 28px;
+      font-size: 1rem;
+      background: #00adb5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background: #00d9e0;
+    }
+
+    .popup,
+    .ddos-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: #222;
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      text-align: left;
+      z-index: 999;
+      transition: transform 0.3s ease;
+      max-width: 90%;
+      width: 400px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .popup.active,
+    .ddos-box.active {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      z-index: 998;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .progress {
+      margin-top: 15px;
+      background: #444;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #00ff9d;
+      transition: width 0.2s ease;
+    }
+
+    .ddos-text {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="hiText">best site made by pijusas</h1>
+  <button onclick="showIP()">Show My Info</button>
+
+  <div class="overlay" id="overlay" onclick="closePopup()"></div>
+
+  <div class="popup" id="popup">
+    <p id="ipText">Fetching info...</p>
+    <button onclick="startDDoS()">click me!</button>
+  </div>
+
+  <div class="ddos-box" id="ddosBox">
+    <p id="ddosText">DDoSing <code>...</code></p>
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <p class="ddos-text" id="ddosPercent">0%</p>
+  </div>
+
+  <script>
+    let savedIP = "???";
+
+    async function showIP() {
+      const popup = document.getElementById('popup');
+      const overlay = document.getElementById('overlay');
+      const ipText = document.getElementById('ipText');
+
+      popup.classList.add('active');
+      overlay.classList.add('active');
+
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        const ip = data.ip;
+        savedIP = ip;
+
+        const userAgent = navigator.userAgent;
+        const browser = getBrowserName(userAgent);
+        const os = getOS(userAgent);
+
+        ipText.innerHTML = `
+          <strong>Your Info:</strong><br>
+          IP Address: <code>${ip}</code><br>
+          Browser: <code>${browser}</code><br>
+          OS/Device: <code>${os}</code><br>
+          User Agent: <code>${userAgent}</code>
+        `;
+      } catch (error) {
+        ipText.textContent = "Couldn't fetch info.";
+      }
+    }
+
+    function closePopup() {
+      document.getElementById('popup').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+    }
+
+    function startDDoS() {
+      const ddosBox = document.getElementById('ddosBox');
+      const ddosText = document.getElementById('ddosText');
+      const progressBar = document.getElementById('progressBar');
+      const percentText = document.getElementById('ddosPercent');
+
+      ddosText.innerHTML = `DDoSing <code>${savedIP}</code>...`;
+      progressBar.style.width = "0%";
+      percentText.textContent = "0%";
+      ddosBox.classList.add("active");
+
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent++;
+        progressBar.style.width = percent + "%";
+        percentText.textContent = percent + "%";
+        if (percent >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            window.location.href = "https://youtu.be/8GdAecj-ZzQ?si=QUJJ1b9Rk71s_qE3";
+          }, 500); // Add a slight delay before redirect
+        }
+      }, 50); // fast animation
+    }
+
+    function getBrowserName(ua) {
+      if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome";
+      if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
+      if (ua.includes("Firefox")) return "Firefox";
+      if (ua.includes("Edg")) return "Edge";
+      if (ua.includes("Opera") || ua.includes("OPR")) return "Opera";
+      return "Unknown";
+    }
+
+    function getOS(ua) {
+      if (ua.includes("Win")) return "Windows";
+      if (ua.includes("Mac")) return "macOS";
+      if (ua.includes("X11") || ua.includes("Linux")) return "Linux/Unix";
+      if (/Android/.test(ua)) return "Android";
+      if (/iPhone|iPad/.test(ua)) return "iOS";
+      return "Unknown";
+    }
+  </script>
+
+</body>
+</html>
